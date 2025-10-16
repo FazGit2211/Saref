@@ -2,6 +2,6 @@
 {
     public class DtoStadium
     {
-        public List<DtoShift> shifts = new List<DtoShift>();
+        public List<DtoShift> shifts { get; } = new List<DtoShift>();
     }
 }

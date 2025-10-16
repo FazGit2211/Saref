@@ -77,6 +77,7 @@ namespace Saref.Services.StadiumServices
                 foreach (var shift in list)
                 {
                     DtoShift dtoShift = new DtoShift();
+                    dtoShift.Id = shift.Id;
                     dtoShift.Day = shift.Day;
                     dtoShift.Time = shift.Time;
                     dtoShift.Price = shift.Price;

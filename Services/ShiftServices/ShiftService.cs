@@ -21,14 +21,14 @@ namespace Saref.Services.ShiftServices
                 {
                     return null;
                 }
-
+                /*
                 //Consultar la existencia del estadio
                 Stadium stadium = await _contextDB.Stadiums.FindAsync(idStadium);
                 if (stadium == null)
                 {
                     return null;
-                }
-                shift.StadiumId = stadium.Id;
+                }*/
+                shift.StadiumId = idStadium;
                 _contextDB.Shifts.Add(shift);
                 await _contextDB.SaveChangesAsync();
                 return shift;
