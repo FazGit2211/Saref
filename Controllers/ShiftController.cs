@@ -30,17 +30,34 @@ namespace Saref.Controllers
                 return BadRequest(ex);
             }
         }
-        [HttpPost("{id}")]
-        public async Task<ActionResult<Shift>> PostShift([FromBody] Shift shift, int id)
+        [HttpPost("{idStadium}")]
+        public async Task<ActionResult<Shift>> PostShift([FromBody] Shift shift, int idStadium)
         {
             try
             {
-                Shift shiftCreated = await shiftService.CreateShift(shift, id);
+                Shift shiftCreated = await shiftService.CreateShift(shift, idStadium);
                 if (shiftCreated.Equals(null))
                 {
                     return BadRequest();
                 }
                 return Ok(shiftCreated);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+        [HttpGet("{idStadium}")]
+        public async Task<ActionResult<List<Shift>>> GetShiftByIdStadium(int idStadium)
+        {
+            try
+            {
+                List<Shift> shifts = await shiftService.GetShiftByStadium(idStadium);
+                if (shifts.Count <= 0 || shifts == null)
+                {
+                    return NoContent();
+                }
+                return Ok(shifts);
             }
             catch (Exception ex)
             {

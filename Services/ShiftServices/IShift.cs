@@ -1,4 +1,5 @@
-﻿using Saref.Models.Shift;
+﻿using Saref.Models.Dtos;
+using Saref.Models.Shift;
 
 namespace Saref.Services.ShiftServices
 {
@@ -6,6 +7,7 @@ namespace Saref.Services.ShiftServices
     {
         Task<Shift> CreateShift(Shift shift, int idStadium);
         Task<List<Shift>> GetAllShift();
-        Task<Shift> GetShiftById(int idStadium);
+        Task<DtoShift> GetShiftById(int idShift);
+        Task<List<Shift>> GetShiftByStadium(int stadiumId);
     }
 }

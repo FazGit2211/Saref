@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Saref.Data;
+using Saref.Models.Dtos;
 using Saref.Models.Shift;
 using Saref.Models.Stadium;
 
@@ -52,9 +53,44 @@ namespace Saref.Services.ShiftServices
             }
         }
 
-        Task<Shift> IShift.GetShiftById(int idStadium)
+        public async Task<DtoShift> GetShiftById(int idShift)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (idShift <= 0)
+                {
+                    return null;
+                }
+                Shift shift = await _contextDB.Shifts.FindAsync(idShift);
+                if (shift == null)
+                {
+                    return null;
+                }
+                float shiftPrice = (float)shift.Price;
+                DtoShift dtoShift = new DtoShift(shift.Id, shift.Day, shift.Time, shiftPrice);
+                return dtoShift;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
+        public async Task<List<Shift>> GetShiftByStadium(int stadiumId)
+        {
+            try
+            {
+                if (stadiumId <= 0) { return null; }
+                var list = from shift in _contextDB.Shifts where shift.StadiumId.Equals(stadiumId) select shift;
+                if (list == null) { return null; }
+                DtoShift dtoShift = new DtoShift();
+                foreach (var shift in list)
+                {
+                    dtoShift.shifts.Add(shift);
+                }
+                return dtoShift.shifts;
+            }
+            catch { throw new Exception(); }
         }
     }
 }

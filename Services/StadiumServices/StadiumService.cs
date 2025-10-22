@@ -68,22 +68,12 @@ namespace Saref.Services.StadiumServices
             }
         }
 
-        public async Task<DtoStadium> GetStadiumById(int id)
+        public async Task<Stadium> GetStadiumById(int idStadium)
         {
             try
             {
-                var list = from shift in _contextDB.Shifts where shift.StadiumId.Equals(id) select shift;
-                DtoStadium dtoStadium = new DtoStadium();
-                foreach (var shift in list)
-                {
-                    DtoShift dtoShift = new DtoShift();
-                    dtoShift.Id = shift.Id;
-                    dtoShift.Day = shift.Day;
-                    dtoShift.Time = shift.Time;
-                    dtoShift.Price = shift.Price;
-                    dtoStadium.shifts.Add(dtoShift);
-                }
-                return dtoStadium;
+                if (idStadium <= 0) { return null; }
+                return await _contextDB.Stadiums.FindAsync(idStadium);
             }
             catch
             {

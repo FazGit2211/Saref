@@ -1,5 +1,4 @@
-﻿using Saref.Models.Dtos;
-using Saref.Models.Stadium;
+﻿using Saref.Models.Stadium;
 
 namespace Saref.Services.StadiumServices
 {
@@ -7,6 +6,6 @@ namespace Saref.Services.StadiumServices
     {
         Task<Stadium> CreateNew(Stadium stadium);
         Task<List<Stadium>> GetAllStadiums();
-        Task<DtoStadium> GetStadiumById(int id);
+        Task<Stadium> GetStadiumById(int id);
     }
 }
