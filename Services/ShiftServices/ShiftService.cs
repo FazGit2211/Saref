@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Saref.Data;
 using Saref.Models.Dtos;
 using Saref.Models.Shift;
@@ -82,7 +84,7 @@ namespace Saref.Services.ShiftServices
             {
                 if (stadiumId <= 0) { return null; }
                 var list = from shift in _contextDB.Shifts where shift.StadiumId.Equals(stadiumId) select shift;
-                if (list == null) { return null; }
+                if (list.IsNullOrEmpty()) { return new List<Shift>(); }
                 DtoShift dtoShift = new DtoShift();
                 foreach (var shift in list)
                 {

@@ -55,7 +55,7 @@ namespace Saref.Controllers
                 List<Shift> shifts = await shiftService.GetShiftByStadium(idStadium);
                 if (shifts.Count <= 0 || shifts == null)
                 {
-                    return NoContent();
+                    return shifts;
                 }
                 return Ok(shifts);
             }

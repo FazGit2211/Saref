@@ -50,16 +50,16 @@ namespace Saref.Controllers
             }
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<DtoStadium>> GetStadiumById(int id)
+        public async Task<ActionResult<Stadium>> GetStadiumById(int id)
         {
             try
             {
-                DtoStadium dtoStadium = await _stadiumService.GetStadiumById(id);
-                if (dtoStadium == null)
+                Stadium stadium = await _stadiumService.GetStadiumById(id);
+                if (stadium == null)
                 {
                     return NoContent();
                 }
-                return Ok(dtoStadium);
+                return Ok(stadium);
             }
             catch (Exception ex)
             {
