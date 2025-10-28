@@ -2,7 +2,7 @@
 {
     public class Shift
     {
-        public int Id { get; set; }
+        protected internal int Id { get; set; }
         public DateOnly Day { get; set; }
         public TimeOnly Time { get; set; }
         public static int CountShift = 0;

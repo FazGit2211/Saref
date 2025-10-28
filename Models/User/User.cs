@@ -3,8 +3,10 @@
     public class User
     {
         protected internal int Id { get; set; }
-        protected internal string Username { get; set; }
-        protected internal string Password { get; set; }
+        private string username;
+        public string Username { get { return username; } set { if(value.Trim() != ""){ username = value; } } }
+        private string password;
+        public string Password { get { return password; } set { if (value.Trim() != "") { password = value; } } }
         protected internal byte[] Salt { get; set; }
 
     }

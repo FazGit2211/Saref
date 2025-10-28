@@ -13,7 +13,8 @@ namespace Saref.Controllers
         {
             _userService = userService;
         }
-        [HttpPost("/signIn")]
+        [Route("signin")]
+        [HttpPost]
         public async Task<ActionResult<User>> SignIn([FromBody] User user)
         {
             try
@@ -30,7 +31,8 @@ namespace Saref.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost("/login")]
+        [Route("login")]
+        [HttpPost]
         public async Task<ActionResult<User>> Login([FromBody] User user)
         {
             try

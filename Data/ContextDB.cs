@@ -11,5 +11,11 @@ namespace Saref.Data
         public DbSet<Stadium> Stadiums { get; set; }
         public DbSet<Shift> Shifts { get; set; }
         public DbSet<User> Users { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().ToTable("Users").HasKey(x => x.Id);
+            modelBuilder.Entity<Stadium>().HasKey(s => s.Id);
+            modelBuilder.Entity<Shift>().HasKey(sh => sh.Id);
+        }
     }
 }

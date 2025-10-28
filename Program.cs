@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Saref.Data;
+using Saref.Models.User;
 using Saref.Services.ShiftServices;
 using Saref.Services.StadiumServices;
+using Saref.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<StadiumService>();
 builder.Services.AddScoped<ShiftService>();
+builder.Services.AddScoped<IPasswordHasher<User>,PasswordHasher<User>>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
