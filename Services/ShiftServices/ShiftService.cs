@@ -1,10 +1,11 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Saref.Data;
+using Saref.Models.Client;
 using Saref.Models.Dtos;
 using Saref.Models.Shift;
 using Saref.Models.Stadium;
+using Saref.Services.StadiumServices;
 
 namespace Saref.Services.ShiftServices
 {
@@ -16,25 +17,27 @@ namespace Saref.Services.ShiftServices
         {
             _contextDB = contextDB;
         }
-        public async Task<Shift> CreateShift(Shift shift, int idStadium)
+        public async Task<DtoShift> CreateShift(Shift shift, int idStadium, int idClient)
         {
             try
             {
-                if (shift.Day.Equals(null) || shift.Price.Equals(null))
+                if (shift.Day.Equals(null) || shift.Price.Equals(null) || idStadium <= 0 || idClient <= 0)
                 {
                     return null;
                 }
-                /*
+                
                 //Consultar la existencia del estadio
-                Stadium stadium = await _contextDB.Stadiums.FindAsync(idStadium);
-                if (stadium == null)
+                Stadium stadiumExist = await _contextDB.Stadiums.FindAsync(idStadium);
+                Client clientExist = await _contextDB.Clients.FindAsync(idClient);
+                if (stadiumExist == null || clientExist == null)
                 {
                     return null;
-                }*/
+                }
                 shift.StadiumId = idStadium;
+                shift.ClientId = idClient;
                 _contextDB.Shifts.Add(shift);
                 await _contextDB.SaveChangesAsync();
-                return shift;
+                return new DtoShift(shift.Id,shift.Day,shift.Time,Convert.ToInt16(shift.Price),stadiumExist,clientExist);
             }
             catch
             {
@@ -46,7 +49,7 @@ namespace Saref.Services.ShiftServices
         {
             try
             {
-                List<Shift> shifts = await _contextDB.Shifts.Include(st => st.Stadium).ToListAsync();
+                List<Shift> shifts = await _contextDB.Shifts.ToListAsync();
                 return shifts;
             }
             catch
@@ -69,7 +72,9 @@ namespace Saref.Services.ShiftServices
                     return null;
                 }
                 float shiftPrice = (float)shift.Price;
-                DtoShift dtoShift = new DtoShift(shift.Id, shift.Day, shift.Time, shiftPrice);
+                Stadium stadiumExist = await _contextDB.Stadiums.FindAsync(shift.StadiumId);
+                Client clientExist = await _contextDB.Clients.FindAsync(shift.ClientId);
+                DtoShift dtoShift = new DtoShift(shift.Id, shift.Day, shift.Time, shiftPrice,stadiumExist,clientExist);
                 return dtoShift;
             }
             catch
@@ -78,21 +83,30 @@ namespace Saref.Services.ShiftServices
             }
         }
 
-        public async Task<List<Shift>> GetShiftByStadium(int stadiumId)
+        public async Task<Shift> UpdateShift(Shift shift, int idShift)
         {
             try
             {
-                if (stadiumId <= 0) { return null; }
-                var list = from shift in _contextDB.Shifts where shift.StadiumId.Equals(stadiumId) select shift;
-                if (list.IsNullOrEmpty()) { return new List<Shift>(); }
-                DtoShift dtoShift = new DtoShift();
-                foreach (var shift in list)
+                if (shift.Day.Equals(null) || shift.Price.Equals(null) || idShift <= 0)
                 {
-                    dtoShift.shifts.Add(shift);
+                    return null;
+
                 }
-                return dtoShift.shifts;
+                Shift shiftExist = await _contextDB.Shifts.FindAsync(idShift);
+                if (shiftExist == null)
+                {
+                    return null;
+                }
+                shiftExist.Day = shift.Day;
+                shiftExist.Time = shift.Time;
+                shiftExist.Price = shift.Price;
+                await _contextDB.SaveChangesAsync();
+                return shiftExist;
             }
-            catch { throw new Exception(); }
+            catch
+            {
+                throw new Exception();
+            }
         }
     }
 }

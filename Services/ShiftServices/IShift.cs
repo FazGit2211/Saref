@@ -5,9 +5,10 @@ namespace Saref.Services.ShiftServices
 {
     public interface IShift
     {
-        Task<Shift> CreateShift(Shift shift, int idStadium);
+        Task<DtoShift> CreateShift(Shift shift, int idStadium, int idClient);
         Task<List<Shift>> GetAllShift();
         Task<DtoShift> GetShiftById(int idShift);
-        Task<List<Shift>> GetShiftByStadium(int stadiumId);
+
+        Task<Shift> UpdateShift(Shift shift, int idShift);
     }
 }

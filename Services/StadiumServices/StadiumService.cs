@@ -18,7 +18,7 @@ namespace Saref.Services.StadiumServices
         {
             try
             {
-                if (stadium.Name.Equals(null) || stadium.Address.Equals(null))
+                if (stadium.Name.Trim() == "" || stadium.Address.Trim() == "")
                 {
                     throw new Exception("Error valores no validos");
                 }
@@ -36,7 +36,7 @@ namespace Saref.Services.StadiumServices
         {
             try
             {
-                List<Stadium> list = await _contextDB.Stadiums.ToListAsync();
+                List<Stadium> list = await _contextDB.Stadiums.Include(sh => sh.Shifts).ToListAsync();
 
                 //Declarar e instanciar grafo
                 /*

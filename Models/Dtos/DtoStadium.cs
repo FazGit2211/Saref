@@ -2,6 +2,8 @@
 {
     public class DtoStadium
     {
-        public List<DtoShift> shifts { get; } = new List<DtoShift>();
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public List<DtoShift> Shifts { get; } = new List<DtoShift>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Saref.Models.Dtos;
 using Saref.Models.Shift;
 using Saref.Services.ShiftServices;
 
@@ -30,34 +31,17 @@ namespace Saref.Controllers
                 return BadRequest(ex);
             }
         }
-        [HttpPost("{idStadium}")]
-        public async Task<ActionResult<Shift>> PostShift([FromBody] Shift shift, int idStadium)
+        [HttpPost("{idStadium}/{idClient}")]
+        public async Task<ActionResult<DtoShift>> PostShift([FromBody] Shift shift, int idStadium, int idClient)
         {
             try
             {
-                Shift shiftCreated = await shiftService.CreateShift(shift, idStadium);
+                DtoShift shiftCreated = await shiftService.CreateShift(shift, idStadium, idClient);
                 if (shiftCreated.Equals(null))
                 {
                     return BadRequest();
                 }
                 return Ok(shiftCreated);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
-        [HttpGet("{idStadium}")]
-        public async Task<ActionResult<List<Shift>>> GetShiftByIdStadium(int idStadium)
-        {
-            try
-            {
-                List<Shift> shifts = await shiftService.GetShiftByStadium(idStadium);
-                if (shifts.Count <= 0 || shifts == null)
-                {
-                    return shifts;
-                }
-                return Ok(shifts);
             }
             catch (Exception ex)
             {

@@ -2,7 +2,7 @@
 {
     public abstract class PaymentMethod
     {
-        int Id { get; set; }
-        DateOnly Date  {get; set;}
+        public int Id { get; set; }
+        public DateOnly Date { get; set; }
     }
 }

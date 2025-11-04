@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Saref.Data;
 using Saref.Models.User;
+using Saref.Services.ClientServices;
 using Saref.Services.ShiftServices;
 using Saref.Services.StadiumServices;
 using Saref.Services.UserService;
@@ -12,7 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<StadiumService>();
 builder.Services.AddScoped<ShiftService>();
-builder.Services.AddScoped<IPasswordHasher<User>,PasswordHasher<User>>();
+builder.Services.AddScoped<ClientService>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddCors(options =>
 {
@@ -22,9 +24,9 @@ builder.Services.AddCors(options =>
     });
 });
 //Asignar la cadena de conexión
-var connectionString = builder.Configuration.GetConnectionString("SafpContextDb");
+var connectionString = builder.Configuration.GetConnectionString("ContextDataBase");
 //Asignar el contexto a la base de datos
-builder.Services.AddSqlServer<ContextDB>(connectionString);
+builder.Services.AddSqlite<ContextDB>(connectionString);
 
 var app = builder.Build();
 app.UseCors("AllowSpecificOrigin");

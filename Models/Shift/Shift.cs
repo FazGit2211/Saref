@@ -2,17 +2,31 @@
 {
     public class Shift
     {
-        protected internal int Id { get; set; }
-        public DateOnly Day { get; set; }
-        public TimeOnly Time { get; set; }
+        private int id;
+        public int Id { get { return id; } set { id = value; } }
+        private DateOnly day;
+        public DateOnly Day { get { return day; } set { day = value; } }
+
+        private TimeOnly time;
+        public TimeOnly Time { get { return time; } set { time = value; } }
+
         public static int CountShift = 0;
+
         public const int MAX_SHIFT = 10;
-        public double Price { get; set; }
-        public int? StadiumId { get; set; }
+
+        private double price;
+        public double Price { get { return price; } set { price = value; } }
+
+        private int? stadiumId;
         enum StateShift { Reserved, Confirmed, Canceled, Done, Unassisted }
-        public Saref.Models.Stadium.Stadium? Stadium { get; set; }
-        int? ClientId { get; set; }
-        Client.Client? Client { get; set; }
+
+        public int? StadiumId { get { return stadiumId; } set { stadiumId = value; } }
+
+        private int? clientId;
+
+        public int? ClientId { get { return clientId; } set { clientId = value; } }
+
+
 
         public Shift(DateOnly day, TimeOnly time, double price)
         {
