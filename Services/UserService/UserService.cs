@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Identity;
 using Saref.Data;
 using Saref.Models.User;
-using System.Security.Cryptography;
 
 namespace Saref.Services.UserService
 {
@@ -24,7 +21,7 @@ namespace Saref.Services.UserService
             {
                 //Buscar si existe primero
                 var userExist = from u in _contextDB.Users where u.Username.Equals(user.Username) select u;
-                if (!userExist.IsNullOrEmpty())
+                if (userExist == null)
                 {
                     return null;
                 }
@@ -49,7 +46,7 @@ namespace Saref.Services.UserService
             {
                 //Buscar si existe primero
                 var userExist = from u in _contextDB.Users where u.Username == user.Username select u;
-                if (userExist.IsNullOrEmpty())
+                if (userExist == null)
                 {
                     return null;
                 }
