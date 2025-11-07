@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Saref.Models.Dtos;
 using Saref.Models.Shift;
 using Saref.Services.ShiftServices;
 
 namespace Saref.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ShiftController : Controller

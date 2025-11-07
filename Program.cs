@@ -9,7 +9,6 @@ using Saref.Services.StadiumServices;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddScoped<StadiumService>();
 builder.Services.AddScoped<ShiftService>();
@@ -26,11 +25,9 @@ var connectionString = builder.Configuration.GetConnectionString("ContextDataBas
 //Asignar el contexto a la base de datos
 //builder.Services.AddSqlite<ContextDB>(connectionString);
 builder.Services.AddDbContext<ContextDB>(options => options.UseSqlite(connectionString));
-builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<Client>().AddEntityFrameworkStores<ContextDB>();
 var app = builder.Build();
 app.UseCors("AllowSpecificOrigin");
 app.MapControllers();
-app.MapIdentityApi<Client>();
 
 app.Run();

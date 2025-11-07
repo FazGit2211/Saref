@@ -5,9 +5,9 @@ using Saref.Services.ClientServices;
 
 namespace Saref.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[Controller]")]
-    [Authorize]
     public class ClientController : Controller
     {
         private readonly ClientService _clientService;
