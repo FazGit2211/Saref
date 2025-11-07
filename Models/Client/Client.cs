@@ -1,6 +1,8 @@
-﻿namespace Saref.Models.Client
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace Saref.Models.Client
 {
-    public class Client
+    public class Client : IdentityUser
     {
 
         private int id;
@@ -31,8 +33,5 @@
         private int usuarioId;
 
         public int UsuarioId { get { return usuarioId; } set { usuarioId = value; } }
-
-        private User.User? user;
-        public User.User? User { get { return user; } set { user = value; } }
     }
 }

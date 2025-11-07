@@ -22,9 +22,6 @@
 
         public int? StadiumId { get { return stadiumId; } set { stadiumId = value; } }
 
-        private int? clientId;
-
-        public int? ClientId { get { return clientId; } set { clientId = value; } }
 
 
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Saref.Data;
 using Saref.Models.Client;
-using Saref.Models.User;
 
 namespace Saref.Services.ClientServices
 {
@@ -21,17 +20,12 @@ namespace Saref.Services.ClientServices
                 {
                     return null;
                 }
-                User userExist = await _contextDb.Users.FindAsync(paramUserId);
-                if (userExist == null)
-                {
-                    return null;
-                }
-                paramClient.UsuarioId = paramUserId;
                 _contextDb.Clients.Add(paramClient);
                 await _contextDb.SaveChangesAsync();
                 return paramClient;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new Exception();
             }
         }

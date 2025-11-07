@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Saref.Models.Client;
 using Saref.Services.ClientServices;
 
@@ -6,6 +7,7 @@ namespace Saref.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [Authorize]
     public class ClientController : Controller
     {
         private readonly ClientService _clientService;

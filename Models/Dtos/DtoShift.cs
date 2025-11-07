@@ -21,14 +21,13 @@
         private Client.Client? client;
 
         public Client.Client? Client { get { return client; } set { client = value; } }
-        public DtoShift(int id, DateOnly day, TimeOnly time, float price, Stadium.Stadium paramStadium, Client.Client paramClient)
+        public DtoShift(int id, DateOnly day, TimeOnly time, float price, Stadium.Stadium paramStadium)
         {
             Id = id;
             Day = day;
             Time = time;
             Price = price;
             Stadium = paramStadium;
-            Client = paramClient;
         }
 
 

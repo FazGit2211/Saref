@@ -34,10 +34,9 @@ namespace Saref.Services.ShiftServices
                     return null;
                 }
                 shift.StadiumId = idStadium;
-                shift.ClientId = idClient;
                 _contextDB.Shifts.Add(shift);
                 await _contextDB.SaveChangesAsync();
-                return new DtoShift(shift.Id,shift.Day,shift.Time,Convert.ToInt16(shift.Price),stadiumExist,clientExist);
+                return new DtoShift(shift.Id,shift.Day,shift.Time,Convert.ToInt16(shift.Price),stadiumExist);
             }
             catch
             {
@@ -73,8 +72,7 @@ namespace Saref.Services.ShiftServices
                 }
                 float shiftPrice = (float)shift.Price;
                 Stadium stadiumExist = await _contextDB.Stadiums.FindAsync(shift.StadiumId);
-                Client clientExist = await _contextDB.Clients.FindAsync(shift.ClientId);
-                DtoShift dtoShift = new DtoShift(shift.Id, shift.Day, shift.Time, shiftPrice,stadiumExist,clientExist);
+                DtoShift dtoShift = new DtoShift(shift.Id, shift.Day, shift.Time, shiftPrice,stadiumExist);
                 return dtoShift;
             }
             catch
