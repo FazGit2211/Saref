@@ -20,7 +20,7 @@ namespace Saref.Services.StadiumServices
             {
                 if (stadium.Name.Trim() == "" || stadium.Address.Trim() == "")
                 {
-                    throw new Exception("Error valores no validos");
+                    return null;
                 }
                 _contextDB.Stadiums.Add(stadium);
                 await _contextDB.SaveChangesAsync();

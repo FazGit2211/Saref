@@ -6,7 +6,6 @@ using Saref.Services.ShiftServices;
 
 namespace Saref.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ShiftController : Controller
@@ -33,13 +32,13 @@ namespace Saref.Controllers
                 return BadRequest(ex);
             }
         }
-        [HttpPost("{idStadium}/{idClient}")]
-        public async Task<ActionResult<DtoShift>> PostShift([FromBody] Shift shift, int idStadium, int idClient)
+        [HttpPost]
+        public async Task<ActionResult<DtoShift>> PostShift([FromBody] Shift shift)
         {
             try
             {
-                DtoShift shiftCreated = await shiftService.CreateShift(shift, idStadium, idClient);
-                if (shiftCreated.Equals(null))
+                DtoShift shiftCreated = await shiftService.CreateShift(shift);
+                if (shiftCreated == null)
                 {
                     return BadRequest();
                 }

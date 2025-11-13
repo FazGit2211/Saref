@@ -3,7 +3,18 @@
     public class Shift
     {
         private int id;
-        public int Id { get { return id; } set { id = value; } }
+        public int Id
+        {
+            get { return id; }
+            set
+            {
+                if (value > 0)
+                {
+                    id = value;
+                }
+                ;
+            }
+        }
         private DateOnly day;
         public DateOnly Day { get { return day; } set { day = value; } }
 
@@ -12,25 +23,28 @@
 
         public static int CountShift = 0;
 
-        public const int MAX_SHIFT = 10;
-
         private double price;
-        public double Price { get { return price; } set { price = value; } }
+        public double Price { get { return price; } set { if (value > 0) { price = value; } } }
 
-        private int? stadiumId;
-        enum StateShift { Reserved, Confirmed, Canceled, Done, Unassisted }
+        private Stadium.Stadium? stadium;
 
-        public int? StadiumId { get { return stadiumId; } set { stadiumId = value; } }
-
+        public Stadium.Stadium Stadium { get { return stadium; } set { if (value != null) { stadium = value; } } }
 
 
+        private Client.Client? client;
 
-        public Shift(DateOnly day, TimeOnly time, double price)
+        public Client.Client? Client { get { return client; } set { if (value != null) { client = value; } } }
+
+        public Shift() { }
+
+        public Shift(DateOnly day, TimeOnly time, double price, Stadium.Stadium paramStadium, Client.Client paramClient)
         {
             this.Day = day;
             this.Time = time;
             CountShift++;
             this.Price = price;
+            this.Stadium = paramStadium;
+            this.Client = paramClient;
         }
     }
 }

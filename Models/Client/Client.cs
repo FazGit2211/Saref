@@ -5,8 +5,8 @@ namespace Saref.Models.Client
     public class Client : IdentityUser
     {
 
-        private int id;
-        public int Id { get { return id; } set { id = value; } }
+        private string id;
+        public string Id { get { return id; } set { id = value; } }
 
         private string name;
         public string Name { get { return name; } set { name = value; } }
@@ -30,8 +30,5 @@ namespace Saref.Models.Client
 
         public List<Shift.Shift>? ShiftsClient { get { return shiftsClient; } set { shiftsClient = value; } }
 
-        private int usuarioId;
-
-        public int UsuarioId { get { return usuarioId; } set { usuarioId = value; } }
     }
 }

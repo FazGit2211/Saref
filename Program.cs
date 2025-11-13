@@ -13,13 +13,14 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<StadiumService>();
 builder.Services.AddScoped<ShiftService>();
 builder.Services.AddScoped<ClientService>();
+/*
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("http://localhost:8081").AllowAnyMethod().AllowAnyHeader();
+        builder.WithOrigins("http://localhost:8081/").AllowAnyMethod().AllowAnyHeader();
     });
-});
+});*/
 //Asignar la cadena de conexión
 var connectionString = builder.Configuration.GetConnectionString("ContextDataBase");
 //Asignar el contexto a la base de datos
@@ -27,7 +28,7 @@ var connectionString = builder.Configuration.GetConnectionString("ContextDataBas
 builder.Services.AddDbContext<ContextDB>(options => options.UseSqlite(connectionString));
 builder.Services.AddIdentityApiEndpoints<Client>().AddEntityFrameworkStores<ContextDB>();
 var app = builder.Build();
-app.UseCors("AllowSpecificOrigin");
+//app.UseCors("AllowSpecificOrigin");
 app.MapControllers();
 
 app.Run();
