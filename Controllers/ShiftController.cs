@@ -6,6 +6,7 @@ using Saref.Services.ShiftServices;
 
 namespace Saref.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ShiftController : Controller
@@ -15,6 +16,8 @@ namespace Saref.Controllers
         {
             this.shiftService = shiftService;
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Shift>>> GetShifts()
         {

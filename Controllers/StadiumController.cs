@@ -5,6 +5,7 @@ using Saref.Services.StadiumServices;
 
 namespace Saref.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class StadiumController : Controller
@@ -14,6 +15,8 @@ namespace Saref.Controllers
         {
             _stadiumService = stadiumService;
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Stadium>>> GetStadiums()
         {
@@ -49,6 +52,8 @@ namespace Saref.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<Stadium>> GetStadiumById(int id)
         {

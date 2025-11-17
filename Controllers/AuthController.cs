@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Saref.Models.Client;
 using Saref.Models.Dtos;
+using Saref.Services.JwtServices;
 
 namespace Saref.Controllers
 {
@@ -11,11 +12,13 @@ namespace Saref.Controllers
     {
         private readonly SignInManager<Client> _signInManager;
         private readonly UserManager<Client> _userManager;
+        private readonly JwtTokenService _jwtTokenService;
 
-        public AuthController(SignInManager<Client> signInManager, UserManager<Client> userManager)
+        public AuthController(SignInManager<Client> signInManager, UserManager<Client> userManager, JwtTokenService jwtTokenService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _jwtTokenService = jwtTokenService;
         }
 
         [HttpPost("login")]
@@ -30,7 +33,8 @@ namespace Saref.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, false);
                 if (result.Succeeded)
                 {
-                    return Ok(result);
+                    var token = _jwtTokenService.GenerateToken(model.Username);
+                    return Ok(new { Token = token });
                 }
                 return NoContent();
             }
