@@ -36,7 +36,8 @@ namespace Saref.Services.StadiumServices
         {
             try
             {
-                List<Stadium> list = await _contextDB.Stadiums.Include(sh => sh.Shifts).ToListAsync();
+                List<Stadium> list = await _contextDB.Stadiums.Include(shift => shift.Shifts).ToListAsync();
+
 
                 //Declarar e instanciar grafo
                 /*

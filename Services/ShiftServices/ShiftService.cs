@@ -26,20 +26,28 @@ namespace Saref.Services.ShiftServices
         {
             try
             {
-                if (shift.Day == null || shift.Price <= 0 || shift.Client == null && shift.Stadium == null )
+                if (shift.Price <= 0 || shift.Stadium == null)
                 {
                     return null;
                 }
 
                 //Consultar la existencia del estadio
                 Stadium stadiumExist = await _contextDB.Stadiums.FindAsync(shift.Stadium.Id);
-                Client clientExist = await _userManager.FindByIdAsync(shift.Client.Id);
-                if (stadiumExist == null && clientExist == null)
+                if (stadiumExist == null)
                 {
                     return null;
                 }
-                Shift newShift = new Shift(shift.Day,shift.Time,shift.Price,stadiumExist,clientExist);
-                _contextDB.Shifts.Add(newShift);
+                if (shift.Client != null)
+                {
+                    Client clientExist = await _userManager.FindByIdAsync(shift.Client.Id);
+                    if (clientExist != null)
+                    {
+                        shift.Client = clientExist;
+                    }
+                }
+
+                shift.Stadium = stadiumExist;
+                _contextDB.Shifts.Add(shift);
                 await _contextDB.SaveChangesAsync();
                 return new DtoShift(shift.Day, shift.Time, Convert.ToInt16(shift.Price), stadiumExist);
             }

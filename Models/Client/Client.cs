@@ -1,19 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Text.Json.Serialization;
 
 namespace Saref.Models.Client
 {
     public class Client : IdentityUser
     {
-
-        private string id;
-        public string Id { get { return id; } set { id = value; } }
-
         private string name;
-        public string Name { get { return name; } set { name = value; } }
+        public string Name { get { return name; } set { if (value != null) { name = value; } } }
 
         private string email;
 
-        public string Email { get { return email; } set { email = value; } }
+        public string Email { get { return email; } set { if (value != null) { email = value; } } }
 
         private int documentNumber;
 
@@ -26,8 +23,10 @@ namespace Saref.Models.Client
 
         public PaymentMethod.PaymentMethod? PaymentMethod { get { return paymentMethod; } set { paymentMethod = value; } }
 
+        [JsonIgnore]
         private List<Shift.Shift>? shiftsClient;
 
+        [JsonIgnore]
         public List<Shift.Shift>? ShiftsClient { get { return shiftsClient; } set { shiftsClient = value; } }
 
     }

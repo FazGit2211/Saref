@@ -9,18 +9,17 @@ using Saref.Services.StadiumServices;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(option => option.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
 builder.Services.AddScoped<StadiumService>();
 builder.Services.AddScoped<ShiftService>();
 builder.Services.AddScoped<ClientService>();
-/*
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("http://localhost:8081/").AllowAnyMethod().AllowAnyHeader();
+        builder.WithOrigins("https://localhost:8081", "http://localhost:8081").AllowAnyMethod().AllowAnyHeader();
     });
-});*/
+});
 //Asignar la cadena de conexión
 var connectionString = builder.Configuration.GetConnectionString("ContextDataBase");
 //Asignar el contexto a la base de datos
