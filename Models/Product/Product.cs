@@ -10,5 +10,7 @@
         public string Description { get { return description; } set { if (value != "") { description = value; } } }
         private float price;
         public float Price { get { return price; } set { if (value > 0) { price = value; } } }
+
+        public string TypeDiscriminator { get; set; }
     }
 }

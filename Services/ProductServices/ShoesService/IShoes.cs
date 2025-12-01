@@ -6,5 +6,7 @@ namespace Saref.Services.ProductServices.ShoesService
     {
         Task<Shoes> CreateShoes(Shoes shoes);
         Task<List<Shoes>> GetShoes();
+        Task<Shoes> UpdateShoes(Shoes shoes, int id);
+        Task<Shoes> DeleteShoes(int id);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Saref.Models.Dtos;
 using Saref.Models.Shift;
@@ -6,7 +7,6 @@ using Saref.Services.ShiftServices;
 
 namespace Saref.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ShiftController : Controller
@@ -24,11 +24,15 @@ namespace Saref.Controllers
             try
             {
                 List<Shift> shifts = await shiftService.GetAllShift();
-                if (shifts.Count < 0)
+                if(shifts == null)
+                {
+                    return NotFound();
+                }
+                if (shifts.Count == 0)
                 {
                     return NoContent();
                 }
-                return shifts;
+                return Ok(shifts);
             }
             catch (Exception ex)
             {
@@ -45,7 +49,7 @@ namespace Saref.Controllers
                 {
                     return BadRequest();
                 }
-                return Ok(shiftCreated);
+                return Created();
             }
             catch (Exception ex)
             {

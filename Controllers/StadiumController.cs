@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Saref.Models.Stadium;
 using Saref.Services.StadiumServices;
 
 namespace Saref.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class StadiumController : Controller
@@ -23,7 +23,11 @@ namespace Saref.Controllers
             try
             {
                 List<Stadium> stadiumResult = await _stadiumService.GetAllStadiums();
-                if (stadiumResult == null || stadiumResult.Count < 0)
+                if (stadiumResult == null)
+                {
+                    return NotFound();
+                }
+                if (stadiumResult.Count == 0)
                 {
                     return NoContent();
                 }
@@ -45,7 +49,7 @@ namespace Saref.Controllers
                 {
                     return BadRequest();
                 }
-                return Ok(stadiumCreated);
+                return Created();
             }
             catch (Exception ex)
             {
@@ -62,7 +66,7 @@ namespace Saref.Controllers
                 Stadium stadium = await _stadiumService.GetStadiumById(id);
                 if (stadium == null)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
                 return Ok(stadium);
             }

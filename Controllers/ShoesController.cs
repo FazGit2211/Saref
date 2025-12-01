@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Saref.Models.Product;
 using Saref.Services.ProductServices.ShoesService;
 
@@ -32,6 +34,7 @@ namespace Saref.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<Shoes>>> GetAllShoes()
         {
@@ -40,13 +43,13 @@ namespace Saref.Controllers
                 List<Shoes> shoes = await _shoesService.GetShoes();
                 if (shoes == null)
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
                 if (shoes.Count == 0)
                 {
                     return NoContent();
                 }
-                return shoes;
+                return Ok(shoes);
             }
             catch (Exception ex)
             {
