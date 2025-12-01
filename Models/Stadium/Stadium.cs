@@ -16,6 +16,12 @@
         private List<Shift.Shift>? shifts;
         public List<Shift.Shift>? Shifts { get { return shifts; } set { shifts = value; } }
 
+        public Stadium(string paramName, string paramAddress)
+        {
+            this.Name = paramName;
+            this.Address = paramAddress;
+        }
+
 
     }
 }

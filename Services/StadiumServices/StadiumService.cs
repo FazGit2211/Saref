@@ -10,25 +10,52 @@ namespace Saref.Services.StadiumServices
     {
         //Inyectar contexto de la base de datos
         private readonly ContextDB _contextDB;
+        private bool EmptyStadium = true;
+        private bool EmptyIdStadium = true;
         public StadiumService(ContextDB context)
         {
             _contextDB = context;
         }
-        public async Task<Stadium> CreateNew(Stadium stadium)
+        public async Task<Stadium> CreateNew(DtoStadium dtoStadium)
         {
             try
             {
-                if (stadium.Name.Trim() == "" || stadium.Address.Trim() == "")
+                EmptyStadium = EmptyValues(dtoStadium);
+                if (EmptyStadium)
                 {
-                    return null;
+                    throw new Exception("Empty values");
                 }
-                _contextDB.Stadiums.Add(stadium);
+                Stadium createStadium = new Stadium(dtoStadium.Name, dtoStadium.Address);
+                _contextDB.Stadiums.Add(createStadium);
                 await _contextDB.SaveChangesAsync();
-                return stadium;
+                return createStadium;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                throw new Exception();
+                throw ex;
+            }
+        }
+
+        public async Task<Stadium> DeleteStadium(int id)
+        {
+            try
+            {
+                EmptyIdStadium = EmptyValueId(id);
+                if (EmptyIdStadium)
+                {
+                    throw new Exception("ID not valid");
+                }
+                Stadium stadiumDelete = await _contextDB.Stadiums.FindAsync(id);
+                if (stadiumDelete == null)
+                {
+                    throw new Exception("Stadium not found");
+                }
+                _contextDB.Stadiums.Remove(stadiumDelete);
+                await _contextDB.SaveChangesAsync();
+                return stadiumDelete;
+            }catch(Exception ex)
+            {
+                throw ex;
             }
         }
 
@@ -37,49 +64,80 @@ namespace Saref.Services.StadiumServices
             try
             {
                 List<Stadium> list = await _contextDB.Stadiums.Include(shift => shift.Shifts).ToListAsync();
-
-
-                //Declarar e instanciar grafo
-                /*
-                Grafo grafo = new Grafo(5);
-                foreach (Stadium stadium in list)
+                if(list.Count == 0 || list == null)
                 {
-                    grafo.NewVertice(stadium);
+                    throw new Exception("Not content");
                 }
-                Console.WriteLine("Numbers Vertices:" + grafo.NumVertices);
-                Console.WriteLine("Vertices:" + grafo.Vertices[0].Stadium.ToString());
-                Console.WriteLine("Vertices:" + grafo.Vertices[1].Stadium.ToString());
-                Console.WriteLine("Vertices:" + grafo.Vertices[2].Stadium.ToString());
-                grafo.NewArch(grafo.Vertices[0].NumVertice, grafo.Vertices[2].NumVertice);
-                grafo.NewArch(grafo.Vertices[2].NumVertice, grafo.Vertices[2].NumVertice);
-                grafo.NewArch(grafo.Vertices[0].NumVertice, grafo.Vertices[1].NumVertice);
-                Console.WriteLine("Matriz Adyacencia:");
-                for (int i = 0; i < Grafo.MaxVertices; i++)
-                {
-                    for (int j = 0; j < Grafo.MaxVertices; j++)
-                    {
-                        Console.WriteLine(grafo.MatrizAdyacencia[i, j]);
-                    }
-                }*/
                 return list;
             }
-            catch
+            catch(Exception ex)
             {
-                throw new Exception();
+                throw ex;
             }
         }
 
-        public async Task<Stadium> GetStadiumById(int idStadium)
+        public async Task<Stadium> GetStadiumById(int id)
         {
             try
             {
-                if (idStadium <= 0) { return null; }
-                return await _contextDB.Stadiums.FindAsync(idStadium);
+                EmptyIdStadium = EmptyValueId(id);
+                if (EmptyIdStadium)
+                {
+                    throw new Exception("ID not valid");
+                }
+                return await _contextDB.Stadiums.FindAsync(id);
             }
-            catch
+            catch(Exception ex)
             {
-                throw new Exception();
+                throw ex;
             }
+        }
+
+        public async Task<Stadium> UpdateStadium(DtoStadium dtoStadium, int id)
+        {
+            try
+            {
+                EmptyStadium = EmptyValues(dtoStadium);
+                if (EmptyStadium)
+                {
+                    throw new Exception("Empty values");
+                }
+                EmptyIdStadium = EmptyValueId(id);
+                if (EmptyIdStadium)
+                {
+                    throw new Exception("ID not valid");
+                }
+                Stadium stadiumUpdate = await _contextDB.Stadiums.FindAsync(id);
+                if(stadiumUpdate == null)
+                {
+                    throw new Exception("Stadium not found");
+                }
+                stadiumUpdate.Name = dtoStadium.Name;
+                stadiumUpdate.Address = dtoStadium.Address;
+                _contextDB.Stadiums.Update(stadiumUpdate);
+                await _contextDB.SaveChangesAsync();
+                return stadiumUpdate;
+            }catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private bool EmptyValues(DtoStadium dtoStadium)
+        {
+            if (dtoStadium.Name.Trim() == "" || dtoStadium.Address.Trim() == "")
+            {
+                return true;
+            }
+            return false;
+        }
+        private bool EmptyValueId(int id)
+        {
+            if (id <= 0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

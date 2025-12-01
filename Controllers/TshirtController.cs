@@ -70,7 +70,7 @@ namespace Saref.Controllers
             }
         }
 
-        [HttpDelete("/{id}")]
+        [HttpDelete(Name = "{id}")]
         public async Task<ActionResult<Tshirt>> DeleteTshirtById(int id) {
             try
             {

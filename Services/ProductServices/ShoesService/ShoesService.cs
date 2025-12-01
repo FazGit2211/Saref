@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Saref.Data;
+using Saref.Models.Dtos;
 using Saref.Models.Product;
 
 namespace Saref.Services.ProductServices.ShoesService
@@ -14,18 +15,19 @@ namespace Saref.Services.ProductServices.ShoesService
         {
             _contextDb = contextDb;
         }
-        public async Task<Shoes> CreateShoes(Shoes shoes)
+        public async Task<Shoes> CreateShoes(DtoProduct dtoProduct)
         {
             try
             {
-                EmptyShoes = EmptyValuesShoes(shoes);
+                EmptyShoes = EmptyValuesShoes(dtoProduct);
                 if (EmptyShoes)
                 {
                     throw new Exception("Empty Values");
                 }
-                _contextDb.Add(shoes);
+                Shoes createShoes = new Shoes(dtoProduct.Name,dtoProduct.Description,dtoProduct.Price);
+                _contextDb.Shoes.Add(createShoes);
                 await _contextDb.SaveChangesAsync();
-                return shoes;
+                return createShoes;
             }
             catch (Exception ex) {
                 throw ex;
@@ -41,14 +43,14 @@ namespace Saref.Services.ProductServices.ShoesService
                 {
                     throw new Exception("Empty Values");
                 }
-                var shoesExist = await _contextDb.Shoes.FindAsync(id);
-                if (shoesExist == null)
+                var shoesDelete = await _contextDb.Shoes.FindAsync(id);
+                if (shoesDelete == null)
                 {
                     throw new Exception("ID not valid");
                 }
-                _contextDb.Remove(shoesExist);
+                _contextDb.Shoes.Remove(shoesDelete);
                 await _contextDb.SaveChangesAsync();
-                return shoesExist;
+                return shoesDelete;
             }
             catch (Exception ex) {
                 throw ex;
@@ -66,11 +68,11 @@ namespace Saref.Services.ProductServices.ShoesService
             }
         }
 
-        public async Task<Shoes> UpdateShoes(Shoes shoes, int id)
+        public async Task<Shoes> UpdateShoes(DtoProduct dtoProduct, int id)
         {
             try
             {
-                EmptyShoes = EmptyValuesShoes(shoes);
+                EmptyShoes = EmptyValuesShoes(dtoProduct);
                 if (EmptyShoes)
                 {
                     throw new Exception("Empty Values");
@@ -80,25 +82,25 @@ namespace Saref.Services.ProductServices.ShoesService
                 {
                     throw new Exception("ID not valid");
                 }
-                var shoesExist = await _contextDb.Shoes.FindAsync(id);
-                if (shoesExist == null)
+                var shoesUpdate = await _contextDb.Shoes.FindAsync(id);
+                if (shoesUpdate == null)
                 {
                     throw new Exception("Tshirt not found");
                 }
-                shoesExist.Name = shoes.Name;
-                shoesExist.Price = shoes.Price;
-                shoesExist.Description = shoes.Description;
-                _contextDb.Update(shoesExist);
+                shoesUpdate.Name = dtoProduct.Name;
+                shoesUpdate.Price = dtoProduct.Price;
+                shoesUpdate.Description = dtoProduct.Description;
+                _contextDb.Shoes.Update(shoesUpdate);
                 await _contextDb.SaveChangesAsync();
-                return shoesExist;
+                return shoesUpdate;
             }
             catch (Exception ex) {
                 throw ex;
             }
         }
 
-        private bool EmptyValuesShoes(Shoes shoes) {
-            if (shoes.Name.Trim().Equals("") && shoes.Price <= 0)
+        private bool EmptyValuesShoes(DtoProduct dtoProduct) {
+            if (dtoProduct.Name.Trim().Equals("") && dtoProduct.Price <= 0)
             {
                 return true;
             }

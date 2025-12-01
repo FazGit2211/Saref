@@ -42,7 +42,7 @@ namespace Saref.Services.ProductServices.TshirtService
                 {
                     throw new Exception("ID not valid");
                 }
-                var tshirtExist = await _contextDb.Tshirts.FindAsync(id);
+                Tshirt tshirtExist = await _contextDb.Tshirts.FindAsync(id);
                 if (tshirtExist == null)
                 {
                     throw new Exception("Tshirt not found");
@@ -79,12 +79,14 @@ namespace Saref.Services.ProductServices.TshirtService
                 {
                     throw new Exception("ID not valid");
                 }
-                var tshirtExist = await _contextDb.Tshirts.FindAsync(id);
+                Tshirt tshirtExist = await _contextDb.Tshirts.FindAsync(id);
                 if (tshirtExist == null) {
                     throw new Exception("Tshirt not found");
                 }
-                Tshirt updateTshirt = new Tshirt(dtoProduct.Name, dtoProduct.Description, dtoProduct.Price);                
-                _contextDb.Tshirts.Add(updateTshirt);
+                tshirtExist.Name = dtoProduct.Name;
+                tshirtExist.Price = dtoProduct.Price;
+                tshirtExist.Description = dtoProduct.Description;
+                _contextDb.Tshirts.Update(tshirtExist);
                 await _contextDb.SaveChangesAsync();
                 return tshirtExist;
             }catch (Exception ex) { throw ex; }
