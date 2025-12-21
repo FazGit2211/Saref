@@ -47,24 +47,18 @@ namespace Saref.Controllers
         [HttpPost("signin")]
         public async Task<ActionResult<Client>> Register([FromBody] DtoSignInViewModel model)
         {
-            try
+            Client client = new Client { UserName = model.Username, Name = model.Name, DocumentNumber = model.DocumentNumber, Email = model.Email, Address = model.Address };
+            var clientWithRole = await _userManager.AddToRoleAsync(client, "ADMIN");
+            if (!clientWithRole.Succeeded)
             {
-                if (model.Username.Trim().Equals("") || model.Password.Trim().Equals("") || model.Name.Trim().Equals("") || model.DocumentNumber <= 0)
-                {
-                    return NoContent();
-                }
-                Client client = new Client { UserName = model.Username, Name = model.Name, DocumentNumber = model.DocumentNumber, Email = model.Email, Address = model.Address };
-                var result = await _userManager.CreateAsync(client, model.Password);
-                if (result.Succeeded)
-                {
-                    return Ok(result);
-                }
-                return NoContent();
+                throw new Exception("Error add role user");
             }
-            catch
+            var result = await _userManager.CreateAsync(client, model.Password);
+            if (!result.Succeeded)
             {
-                return BadRequest();
+               throw new Exception("Error create user"); 
             }
+            return Ok(result);
         }
     }
 }

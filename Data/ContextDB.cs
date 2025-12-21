@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Saref.Models.Client;
 using Saref.Models.PaymentMethod;
-using Saref.Models.Product;
 using Saref.Models.Shift;
 using Saref.Models.Stadium;
 
@@ -17,14 +16,5 @@ namespace Saref.Data
         public DbSet<BankTransfer> BankTransfer { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Client> Clients { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Tshirt> Tshirts { get; set; }
-        public DbSet<Shoes> Shoes { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Product>().HasDiscriminator<string>("TypeDiscriminator").HasValue<Product>("Products").HasValue<Tshirt>("Tshirt").HasValue<Shoes>("Shoes");
-            base.OnModelCreating(modelBuilder);
-        }
     }
 }

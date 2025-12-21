@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Saref.Models.Dtos;
 using Saref.Models.Shift;
@@ -21,40 +20,29 @@ namespace Saref.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Shift>>> GetShifts()
         {
-            try
-            {
-                List<Shift> shifts = await shiftService.GetAllShift();
-                if(shifts == null)
-                {
-                    return NotFound();
-                }
-                if (shifts.Count == 0)
-                {
-                    return NoContent();
-                }
-                return Ok(shifts);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+            List<Shift> shifts = await shiftService.GetAllShift();
+            return Ok(shifts);
         }
+
         [HttpPost]
-        public async Task<ActionResult<DtoShift>> PostShift([FromBody] Shift shift)
+        public async Task<ActionResult> CreateShift([FromBody] DtoShift shift)
         {
-            try
-            {
-                DtoShift shiftCreated = await shiftService.CreateShift(shift);
-                if (shiftCreated == null)
-                {
-                    return BadRequest();
-                }
-                return Created();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+            await shiftService.CreateShift(shift);
+            return Created();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateShiftById([FromBody] DtoShift shift,int shiftId,int clientId)
+        {
+            await shiftService.UpdateShift(shift,shiftId,clientId);
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteById(int id)
+        {
+            await shiftService.DeleteShift(id);
+            return Ok();
         }
     }
 }

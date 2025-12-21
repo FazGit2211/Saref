@@ -21,69 +21,44 @@ namespace Saref.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Stadium>>> GetStadiums()
         {
-            try
-            {
-                List<Stadium> stadiumResult = await _stadiumService.GetAllStadiums();                
-                return Ok(stadiumResult);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            List<Stadium> stadiumResult = await _stadiumService.GetAllStadiums();
+            return Ok(stadiumResult);
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateNewStadium([FromBody] DtoStadium dtoStadium)
         {
-            try
-            {
-                Stadium stadiumCreated = await _stadiumService.CreateNew(dtoStadium);
-                return Created();
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            await _stadiumService.CreateNew(dtoStadium);
+            return Created();
         }
 
         [AllowAnonymous]
-        [HttpGet(Name = "{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Stadium>> GetStadiumById(int id)
         {
-            try
-            {
-                Stadium stadium = await _stadiumService.GetStadiumById(id);                
-                return Ok(stadium);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            Stadium stadium = await _stadiumService.GetStadiumById(id);
+            return Ok(stadium);
         }
 
-        [HttpPut(Name = "{id}")]
-        public async Task<ActionResult<Stadium>> UpdateStadiumById([FromBody] DtoStadium dtoStadium, int id)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateStadiumById([FromBody] DtoStadium dtoStadium, int id)
         {
-            try {
-                Stadium stadiumUpdated = await _stadiumService.UpdateStadium(dtoStadium, id);
-                return Ok(stadiumUpdated);
-            }catch(Exception ex)
+            if (!ModelState.IsValid)
             {
-                throw ex;
+                return BadRequest(ModelState);
             }
+            await _stadiumService.UpdateStadium(dtoStadium, id);
+            return Ok();
         }
 
-        [HttpDelete(Name = "{id}")]
-        public async Task<ActionResult<Stadium>> DeleteStadiumById(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteStadiumById(int id)
         {
-            try
-            {
-                Stadium stadiumDeleted = await _stadiumService.DeleteStadium(id);
-                return Ok(stadiumDeleted);
-            }catch(Exception ex)
-            {
-                throw ex;
-            }
+            await _stadiumService.DeleteStadium(id);
+            return Ok();
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿namespace Saref.Models.Dtos
 {
     public class DtoClient
-    {
-        private string id;
-        public string Id { get { return id; } set { if (!value.Trim().Equals("")) { id = value; } } }
+    {        
 
         private string name;
         public string Name { get { return name; } set { if (!value.Trim().Equals("")) { name = value; } } }
@@ -22,14 +20,6 @@
         private string username;
         public string Username { get { return username; } set { if (!value.Trim().Equals("")) { username = value; } } }
 
-        public DtoClient(string paramId, string paramName, string paramEmail, int paramDocument, string paramAddress, string paramUsername)
-        {
-            this.id = paramId;
-            this.name = paramName;
-            this.email = paramEmail;
-            this.documentNumber = paramDocument;
-            this.address = paramAddress;
-            this.username = paramUsername;
-        }
+        public DtoClient() { }
     }
 }

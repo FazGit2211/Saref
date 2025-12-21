@@ -3,18 +3,7 @@
     public class Shift
     {
         private int id;
-        public int Id
-        {
-            get { return id; }
-            set
-            {
-                if (value > 0)
-                {
-                    id = value;
-                }
-                ;
-            }
-        }
+        public int Id { get { return id; } set { if (value > 0) { id = value; } } }
         private DateOnly day;
         public DateOnly Day { get { return day; } set { day = value; } }
 
@@ -26,6 +15,12 @@
         private double price;
         public double Price { get { return price; } set { if (value > 0) { price = value; } } }
 
+        private string state;
+
+        public string State { get { return state; } set { if (!value.Trim().Equals("")) { state = value; } } }
+
+        public enum StateShift : byte { reserved,available, pending }
+        
         private Stadium.Stadium? stadium;
 
         public Stadium.Stadium Stadium { get { return stadium; } set { if (value != null) { stadium = value; } } }
@@ -37,7 +32,16 @@
 
         public Shift() { }
 
-        public Shift(DateOnly day, TimeOnly time, double price, Stadium.Stadium paramStadium, Client.Client paramClient)
+        public Shift(DateOnly day, TimeOnly time, double price, Stadium.Stadium paramStadium)
+        {
+            this.Day = day;
+            this.Time = time;
+            CountShift++;
+            this.Price = price;
+            this.Stadium = paramStadium;
+        }
+
+        public Shift(DateOnly day, TimeOnly time, double price, Stadium.Stadium paramStadium,Client.Client paramClient)
         {
             this.Day = day;
             this.Time = time;
@@ -45,6 +49,15 @@
             this.Price = price;
             this.Stadium = paramStadium;
             this.Client = paramClient;
+        }
+        public static string ConvertStateShift(byte state) {
+            string convertStateShift = "";
+            switch (state) {
+                case 0: convertStateShift = "Reserved";break;
+                case 1: convertStateShift = "Availabled";break;
+                case 2: convertStateShift = "Pending";break;
+            }
+            return convertStateShift;
         }
     }
 }

@@ -1,32 +1,27 @@
-﻿namespace Saref.Models.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Saref.Models.Dtos
 {
     public class DtoShift
     {
+        [Required(ErrorMessage = "Día no puede estar vacio")]
         public DateOnly Day { get; set; }
+        [Required(ErrorMessage = "Hora no puede estar vacio")]
         public TimeOnly Time { get; set; }
+        [Required(ErrorMessage = "Precio no puede estar vacio")]
         public float Price { get; set; }
+        [Required(ErrorMessage = "Estadio no puede estar vacio")]
+        public int StadiumId { get; set; }
+        public string? State { get; set; }
 
-        private Stadium.Stadium? stadium;
-        public Stadium.Stadium? Stadium { get { return stadium; } set { stadium = value; } }
-
-        private Client.Client? client;
-
-        public Client.Client? Client { get { return client; } set { client = value; } }
-        public DtoShift(DateOnly day, TimeOnly time, float price, Stadium.Stadium paramStadium)
+        public DtoShift(DateOnly day, TimeOnly time, float price)
         {
             this.Day = day;
             this.Time = time;
             this.Price = price;
-            this.Stadium = paramStadium;
         }
-        public DtoShift(DateOnly day, TimeOnly time, float price, Stadium.Stadium paramStadium, Client.Client paramClient)
-        {
-            this.Day = day;
-            this.Time = time;
-            this.Price = price;
-            this.Stadium = paramStadium;
-            this.Client = paramClient;
-        }
+
+        public DtoShift() { }
 
     }
 }

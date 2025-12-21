@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Saref.Data;
+using Saref.Exceptions;
 using Saref.Models.Client;
 using Saref.Models.Dtos;
 using Saref.Models.Shift;
 using Saref.Models.Stadium;
-using Saref.Services.StadiumServices;
 
 namespace Saref.Services.ShiftServices
 {
@@ -14,111 +14,89 @@ namespace Saref.Services.ShiftServices
     {
         //Inyectar contexto de la base de datos
         private readonly ContextDB _contextDB;
-
-        //Inyectar UserManager
-        private readonly UserManager<Client> _userManager;
-        public ShiftService(ContextDB contextDB, UserManager<Client> userManager)
+        public ShiftService(ContextDB contextDB)
         {
             _contextDB = contextDB;
-            _userManager = userManager;
         }
-        public async Task<DtoShift> CreateShift(Shift shift)
+        public async Task CreateShift(DtoShift dtoShift)
         {
-            try
-            {
-                if (shift.Price <= 0 || shift.Stadium == null)
-                {
-                    return null;
-                }
-
-                //Consultar la existencia del estadio
-                Stadium stadiumExist = await _contextDB.Stadiums.FindAsync(shift.Stadium.Id);
-                if (stadiumExist == null)
-                {
-                    return null;
-                }
-                if (shift.Client != null)
-                {
-                    Client clientExist = await _userManager.FindByIdAsync(shift.Client.Id);
-                    if (clientExist != null)
-                    {
-                        shift.Client = clientExist;
-                    }
-                }
-
-                shift.Stadium = stadiumExist;
-                _contextDB.Shifts.Add(shift);
-                await _contextDB.SaveChangesAsync();
-                return new DtoShift(shift.Day, shift.Time, Convert.ToInt16(shift.Price), stadiumExist);
+            //Consultar la existencia del estadio
+            Stadium? stadiumExist = await _contextDB.Stadiums.FindAsync(dtoShift.StadiumId);
+            if (stadiumExist == null){
+                throw new NotFoundException("Stadium not exist");
             }
-            catch
-            {
-                return null;
-            }
+            Shift createShift = new Shift(dtoShift.Day,dtoShift.Time,dtoShift.Price,stadiumExist);            
+            byte state = (byte) Shift.StateShift.available;
+            createShift.State = Shift.ConvertStateShift(state);
+            _contextDB.Shifts.Add(createShift);
+            await _contextDB.SaveChangesAsync();
         }
 
         public async Task<List<Shift>> GetAllShift()
         {
-            try
+            List<Shift> shifts = await _contextDB.Shifts.Include(shift => shift.Stadium).ToListAsync();
+            if(shifts.Count == 0 || shifts == null)
             {
-                List<Shift> shifts = await _contextDB.Shifts.ToListAsync();
-                return shifts;
+                throw new NotFoundException("Not Content"); ;
             }
-            catch
-            {
-                return null;
-            }
+            return shifts;
         }
 
-        public async Task<DtoShift> GetShiftById(int idShift)
+        public async Task<Shift> GetShiftById(int idShift)
         {
-            try
-            {
-                if (idShift <= 0)
-                {
-                    return null;
-                }
-                Shift shift = await _contextDB.Shifts.FindAsync(idShift);
-                if (shift == null)
-                {
-                    return null;
-                }
-                float shiftPrice = (float)shift.Price;
-                Stadium stadiumExist = await _contextDB.Stadiums.FindAsync(shift.Stadium.Id);
-                Client clientExist = await _userManager.FindByIdAsync(shift.Client.Id);
-                DtoShift dtoShift = new DtoShift(shift.Day, shift.Time, shiftPrice, stadiumExist, clientExist);
-                return dtoShift;
+            Shift shift = await _contextDB.Shifts.FindAsync(idShift);
+            if (shift == null){ 
+                throw new NotFoundException("Stadium not exist");
             }
-            catch
-            {
-                throw new Exception();
-            }
+            return shift;            
         }
 
-        public async Task<Shift> UpdateShift(Shift shift, int idShift)
+        public async Task UpdateShift(DtoShift dtoShift, int shiftId, int clientId)
         {
-            try
-            {
-                if (shift.Day.Equals(null) || shift.Price.Equals(null) || idShift <= 0)
-                {
-                    return null;
-
-                }
-                Shift shiftExist = await _contextDB.Shifts.FindAsync(idShift);
-                if (shiftExist == null)
-                {
-                    return null;
-                }
-                shiftExist.Day = shift.Day;
-                shiftExist.Time = shift.Time;
-                shiftExist.Price = shift.Price;
-                await _contextDB.SaveChangesAsync();
-                return shiftExist;
+            Shift shiftExist = await _contextDB.Shifts.FindAsync(shiftId);
+            if (shiftExist == null){ 
+                throw new NotFoundException("Stadium not exist");
             }
-            catch
+            //Consultar la existencia del estadio
+            Stadium? stadiumExist = await _contextDB.Stadiums.FindAsync(dtoShift.StadiumId);
+            if (stadiumExist == null)
             {
-                throw new Exception();
+                throw new NotFoundException("Stadium not exist");
             }
+            DtoClient dtoClient = new DtoClient();
+            if(clientId != null || clientId > 0)
+            {
+                Client? client = await _contextDB.Clients.FindAsync(clientId);
+                if (client != null) {
+                    dtoClient.Name = client.Name;
+                    dtoClient.Username = client.UserName;
+                    dtoClient.Address = client.Address;
+                    dtoClient.DocumentNumber = client.DocumentNumber;
+                }
+            }
+            Shift updateShift = new Shift();
+            updateShift.Day = dtoShift.Day;
+            updateShift.Time = dtoShift.Time;
+            updateShift.Price = dtoShift.Price;                        
+            updateShift.State = dtoShift.State;
+            updateShift.Stadium = stadiumExist;
+            updateShift.Client.Name = dtoClient.Name;
+            updateShift.Client.Address = dtoClient.Address;
+            updateShift.Client.DocumentNumber = dtoClient.DocumentNumber;
+            updateShift.Client.Address = dtoClient.Address;
+            _contextDB.Shifts.Update(updateShift);
+            await _contextDB.SaveChangesAsync();
         }
+
+        public async Task DeleteShift(int id)
+        {           
+            Shift? shift = await _contextDB.Shifts.FindAsync(id);
+            if (shift == null)
+            {
+                throw new NotFoundException("Stadium not exist");
+            }
+            _contextDB.Shifts.Remove(shift);
+            await _contextDB.SaveChangesAsync();
+        }        
     }
 }
