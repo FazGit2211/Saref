@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Saref.Data;
+using Saref.Exceptions;
 using Saref.Models.Client;
+using Saref.Models.Dtos;
 
 namespace Saref.Services.ClientServices
 {
@@ -12,27 +14,35 @@ namespace Saref.Services.ClientServices
         {
             _contextDb = contextDB;
         }
-        public async Task<Client> CreateClient(Client paramClient, int paramUserId)
+
+        public async Task<List<Client>> GetClients()
         {
-            try
-            {
-                if (paramClient.Name.Trim().Equals("") || paramClient.Email.Trim().Equals("") || paramUserId <= 0)
-                {
-                    return null;
-                }
-                _contextDb.Clients.Add(paramClient);
-                await _contextDb.SaveChangesAsync();
-                return paramClient;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception();
-            }
+            return await _contextDb.Clients.ToListAsync();
         }
 
-        public Task<List<Client>> GetClients()
+        public async Task UpdateClientById(string id, DtoClient dtoClient)
         {
-            throw new NotImplementedException();
+            Client clientExist = await _contextDb.Clients.FindAsync(id);
+            if (clientExist == null)
+            {
+                throw new NotFoundException("Client not exist");
+            }
+            clientExist.Name = dtoClient.Name;
+            clientExist.DocumentNumber = dtoClient.DocumentNumber;
+            clientExist.Address = dtoClient.Address;
+            _contextDb.Clients.Update(clientExist);
+            await _contextDb.SaveChangesAsync();
+        }
+
+        public async Task DeleteClientById(string id)
+        {
+            Client clientExist = await _contextDb.Clients.FindAsync(id);
+            if (clientExist == null)
+            {
+                throw new NotFoundException("Client not exist");
+            }
+            _contextDb.Remove(clientExist);
+            await _contextDb.SaveChangesAsync();
         }
     }
 }

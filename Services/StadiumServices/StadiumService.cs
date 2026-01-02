@@ -10,13 +10,13 @@ namespace Saref.Services.StadiumServices
     {
         //Inyectar contexto de la base de datos
         private readonly ContextDB _contextDB;
- 
+
         public StadiumService(ContextDB context)
         {
             _contextDB = context;
         }
         public async Task CreateNew(DtoStadium dtoStadium)
-        { 
+        {
             Stadium createStadium = new Stadium(dtoStadium.Name, dtoStadium.Address);
             _contextDB.Stadiums.Add(createStadium);
             await _contextDB.SaveChangesAsync();
@@ -25,7 +25,8 @@ namespace Saref.Services.StadiumServices
         public async Task DeleteStadium(int id)
         {
             Stadium stadiumDelete = await _contextDB.Stadiums.FindAsync(id);
-            if (stadiumDelete == null){
+            if (stadiumDelete == null)
+            {
                 throw new NotFoundException("Stadium not exist");
             }
             _contextDB.Stadiums.Remove(stadiumDelete);
@@ -34,8 +35,9 @@ namespace Saref.Services.StadiumServices
 
         public async Task<List<Stadium>> GetAllStadiums()
         {
-            List<Stadium> list = await _contextDB.Stadiums.ToListAsync();
-            if (list.Count == 0 || list == null) {
+            List<Stadium> list = await _contextDB.Stadiums.Include(shift => shift.Shifts).ToListAsync();
+            if (list.Count == 0 || list == null)
+            {
                 throw new BadRequestException("Not Content");
             }
             return list;
@@ -49,7 +51,8 @@ namespace Saref.Services.StadiumServices
         public async Task UpdateStadium(DtoStadium dtoStadium, int id)
         {
             Stadium stadiumUpdate = await _contextDB.Stadiums.FindAsync(id);
-            if (stadiumUpdate == null) {
+            if (stadiumUpdate == null)
+            {
                 throw new NotFoundException("Stadium not exist");
             }
             stadiumUpdate.Name = dtoStadium.Name;

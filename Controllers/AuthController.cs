@@ -12,51 +12,43 @@ namespace Saref.Controllers
     {
         private readonly SignInManager<Client> _signInManager;
         private readonly UserManager<Client> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JwtTokenService _jwtTokenService;
 
-        public AuthController(SignInManager<Client> signInManager, UserManager<Client> userManager, JwtTokenService jwtTokenService)
+        public AuthController(SignInManager<Client> signInManager, UserManager<Client> userManager, RoleManager<IdentityRole> roleManager, JwtTokenService jwtTokenService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _roleManager = roleManager;
             _jwtTokenService = jwtTokenService;
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<Client>> Login([FromBody] DtoLoginViewModel model)
         {
-            try
+            var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, true);
+            if (result.Succeeded)
             {
-                if (model.Username.Trim().Equals("") || model.Password.Trim().Equals(""))
-                {
-                    return NoContent();
-                }
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, false);
-                if (result.Succeeded)
-                {
-                    var token = _jwtTokenService.GenerateToken(model.Username);
-                    return Ok(new { Token = token });
-                }
-                return NoContent();
+                var token = _jwtTokenService.GenerateToken(model.Username);
+                return Ok(new { Token = token });
             }
-            catch
-            {
-                return BadRequest();
-            }
+            return Unauthorized();
         }
 
         [HttpPost("signin")]
         public async Task<ActionResult<Client>> Register([FromBody] DtoSignInViewModel model)
         {
             Client client = new Client { UserName = model.Username, Name = model.Name, DocumentNumber = model.DocumentNumber, Email = model.Email, Address = model.Address };
-            var clientWithRole = await _userManager.AddToRoleAsync(client, "ADMIN");
-            if (!clientWithRole.Succeeded)
-            {
-                throw new Exception("Error add role user");
-            }
             var result = await _userManager.CreateAsync(client, model.Password);
-            if (!result.Succeeded)
+            if (result.Succeeded)
             {
-               throw new Exception("Error create user"); 
+                var role = new IdentityRole("User");
+                var roleExist = await _roleManager.RoleExistsAsync("User");
+                if (!roleExist)
+                {
+                    await _roleManager.CreateAsync(role);
+                }
+                await _userManager.AddToRoleAsync(client, "User");
             }
             return Ok(result);
         }

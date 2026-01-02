@@ -6,18 +6,14 @@ namespace Saref.Models.Client
     public class Client : IdentityUser
     {
         private string name;
-        public string Name { get { return name; } set { if (value != null) { name = value; } } }
-
-        private string email;
-
-        public string Email { get { return email; } set { if (value != null) { email = value; } } }
+        public string Name { get { return name; } set { if (!value.Trim().Equals("")) { name = value; } } }
 
         private int documentNumber;
 
         public int DocumentNumber { get { return documentNumber; } set { documentNumber = value; } }
 
         private string? address;
-        public string Address { get { return address; } set { address = value; } }
+        public string Address { get { return address; } set { if (!value.Trim().Equals("")) { address = value; } } }
 
         private PaymentMethod.PaymentMethod? paymentMethod;
 

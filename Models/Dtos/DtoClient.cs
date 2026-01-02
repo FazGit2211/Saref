@@ -14,12 +14,10 @@
 
         public int DocumentNumber { get { return documentNumber; } set { if (documentNumber > 0) { documentNumber = value; } } }
 
-        private string? address;
+        private string address;
         public string Address { get { return address; } set { if (!value.Trim().Equals("")) { address = value; } } }
 
         private string username;
         public string Username { get { return username; } set { if (!value.Trim().Equals("")) { username = value; } } }
-
-        public DtoClient() { }
     }
 }

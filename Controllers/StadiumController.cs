@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Saref.Models.Dtos;
 using Saref.Models.Stadium;
@@ -7,6 +6,7 @@ using Saref.Services.StadiumServices;
 
 namespace Saref.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("[controller]")]
     public class StadiumController : Controller
@@ -28,9 +28,6 @@ namespace Saref.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateNewStadium([FromBody] DtoStadium dtoStadium)
         {
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
             await _stadiumService.CreateNew(dtoStadium);
             return Created();
         }
@@ -46,10 +43,6 @@ namespace Saref.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateStadiumById([FromBody] DtoStadium dtoStadium, int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             await _stadiumService.UpdateStadium(dtoStadium, id);
             return Ok();
         }

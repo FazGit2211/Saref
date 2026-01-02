@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,13 +15,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
+builder.Services.AddAuthorization();
+builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(configurePoli =>
     { configurePoli.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin(); });
 });
-
-builder.Services.AddControllers().ConfigureApiBehaviorOptions(option => option.SuppressModelStateInvalidFilter = true).AddJsonOptions(option => option.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve);
 builder.Services.AddScoped<StadiumService>();
 builder.Services.AddScoped<ShiftService>();
 builder.Services.AddScoped<ClientService>();
@@ -30,10 +31,40 @@ builder.Services.AddProblemDetails();
 var connectionString = builder.Configuration.GetConnectionString("ContextDataBase");
 //Asignar el contexto a la base de datos
 builder.Services.AddDbContext<ContextDB>(options => options.UseSqlite(connectionString));
-builder.Services.AddIdentityApiEndpoints<Client>().AddEntityFrameworkStores<ContextDB>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => { options.SaveToken = true; options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters { ValidateIssuer = true, ValidateAudience = true, ValidateLifetime = true, ValidateIssuerSigningKey = true, ValidIssuer = builder.Configuration["Jwt:Issuer"], ValidAudience = builder.Configuration["Jwt:Audience"], IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])) }; });
+builder.Services.AddIdentity<Client, IdentityRole>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.MaxFailedAccessAttempts = 3;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(2);
+    options.Password.RequiredLength = 10;
+    options.Password.RequireDigit = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+}).AddEntityFrameworkStores<ContextDB>();
+var secretKey = Environment.GetEnvironmentVariable("Jwt__SecretKey");
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+    };
+});
 var app = builder.Build();
-
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseExceptionHandler(error =>
 {
     error.Run(async context =>
@@ -53,8 +84,6 @@ app.UseExceptionHandler(error =>
         await context.Response.WriteAsJsonAsync(problem);
     });
 });
-app.UseCors();
-app.UseAuthentication();
 app.MapControllers();
-
+app.UseCors();
 app.Run();

@@ -6,6 +6,7 @@ using Saref.Services.ShiftServices;
 
 namespace Saref.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("[controller]")]
     public class ShiftController : Controller
@@ -31,10 +32,10 @@ namespace Saref.Controllers
             return Created();
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateShiftById([FromBody] DtoShift shift,int shiftId,int clientId)
+        [HttpPut("{shiftId}")]
+        public async Task<ActionResult> UpdateShiftById([FromBody] DtoShift shift, int shiftId)
         {
-            await shiftService.UpdateShift(shift,shiftId,clientId);
+            await shiftService.UpdateShift(shift, shiftId);
             return Ok();
         }
 
@@ -43,6 +44,13 @@ namespace Saref.Controllers
         {
             await shiftService.DeleteShift(id);
             return Ok();
+        }
+
+        [HttpPost("{shiftId}/{clientId}")]
+        public async Task<ActionResult<Shift>> AddClient(int shiftId, string clientId)
+        {
+            Shift shiftWithlient = await shiftService.AddClientToShift(shiftId, clientId);
+            return Ok(shiftWithlient);
         }
     }
 }

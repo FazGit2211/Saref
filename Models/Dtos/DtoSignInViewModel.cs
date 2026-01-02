@@ -4,11 +4,16 @@ namespace Saref.Models.Dtos
 {
     public class DtoSignInViewModel : DtoLoginViewModel
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
+        private string name;
+        public string Name { get { return name; } set { if (!value.Trim().Equals("")) { name = value; } } }
 
-        public int DocumentNumber { get; set; }
+        private string email;
+        public string Email { get { return email; } set { if (!value.Trim().Equals("")) { email = value; } } }
 
-        public string Address { get; set; }
+        private int dni;
+        public int DocumentNumber { get { return dni; } set { if (value > 0) { dni = value; } } }
+
+        private string address;
+        public string Address { get { return address; } set { if (!value.Trim().Equals("")) { address = value; } } }
     }
 }
